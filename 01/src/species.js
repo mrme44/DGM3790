@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import './species.css';
 import {species} from './species_json.js'
 import Specie from './specie.js'
