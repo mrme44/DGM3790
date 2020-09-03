@@ -1,0 +1,31 @@
+.specie{
+    background: #eee;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 20px;
+}
+
+h3{
+    font-size: 1.5em;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 7px;
+    margin-top: 0;
+    padding-top: 1em;
+}
+h4{
+    margin-top: 0;
+    color: #888;
+}
+
+.details{
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    box-shadow: 0 0 5px -2px #333;
+    max-width: 400px;
+    margin: auto;
+    background: #f0f0f0;
+}
+.details .row{
+    padding: 4px;
+}

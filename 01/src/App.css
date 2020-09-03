@@ -1,0 +1,13 @@
+.App {
+  text-align: center;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+h1{
+    border-bottom: 2px solid #ddd;
+    margin-bottom: 0;
+    padding-bottom: 1em;
+}
