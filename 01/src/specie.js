@@ -9,7 +9,7 @@ class Specie extends Component {
             <div className='details'>
                 <span className='row'><b>Height: </b>{this.props.average_height}</span>
                 <span className='row'><b>Color: </b>{this.props.skin_colors}</span>
-                <span className='row'><b>Language: </b>{this.props.hair_colors}</span>
+                <span className='row'><b>Language: </b>{this.props.language}</span>
                 <span className='row'><b>Lifespan: </b>{this.props.average_lifespan}</span>
             </div>
         </div>
