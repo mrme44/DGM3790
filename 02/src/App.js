@@ -8,7 +8,7 @@ function App() {
     <div className="App">
         <h1>The Species of Star Wars</h1>
         <Divider />
-        <Species count={10}></Species>
+        <Species count={9}></Species>
     </div>
   );
 }

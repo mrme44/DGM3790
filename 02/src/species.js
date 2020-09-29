@@ -13,9 +13,12 @@ const useStyles = makeStyles((theme) => ({
     overflow: 'hidden',
     backgroundColor: theme.palette.background.paper,
   },
-  gridList: {
+  gridItem: {
     width: 'auto',
     height: '284px!important',
+  },
+  gridList: {
+    margin: '0!important'
   },
 }));
 
@@ -23,8 +26,6 @@ function Species(props) {
     const classes = useStyles();
 
     const [data, setData] = useState({'loaded':false});
-
-    let ignore = false;
 
     useEffect( () => {
 
@@ -52,9 +53,9 @@ function Species(props) {
     if (data.loaded){
         let ret = [];
         for (let i=0; i<props.count; i++){
-            ret.push( <GridListTile className={classes.gridList} key={data.species[i]['name']}><Specie {...data.species[i]}></Specie></GridListTile> );
+            ret.push( <GridListTile className={classes.gridItem} key={data.species[i]['name']}><Specie {...data.species[i]}></Specie></GridListTile> );
         }
-        return <div className='species'><GridList cols={3} spacing={1}>{ret}</GridList></div>
+        return <div className='species'><GridList className={classes.gridList} cols={3} spacing={1}>{ret}</GridList></div>
     } else{
         return <div className='species'>Loading...</div>
     }
