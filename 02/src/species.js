@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
 function Species(props) {
     const classes = useStyles();
 
-    const [data, setData] = useState({'loaded':false});
+    const [data, setData] = useState({'status':'loading'});
 
     useEffect( () => {
 
@@ -33,29 +33,32 @@ function Species(props) {
           let response;
 
           try {
-            response = await axios.get('https://swapi.dev/api/species?count=12');
+            response = await axios.get('https://swapi.dev/api/species/', {'https': true});
             console.log('👉 Returned data:', response);
           } catch (e) {
             console.log(`😱 Axios request failed: ${e}`);
+            setData({'status': 'error'})
+            return
           }
 
-          const newstate = {
-              'loaded': true,
+          setData({
+              'status': 'loaded',
               'species': response.data.results
-          }
-          setData(newstate)
+          })
         }
         fetchSpecies()
 
     }, []);
 
 
-    if (data.loaded){
+    if (data.status === 'loaded'){
         let ret = [];
         for (let i=0; i<props.count; i++){
             ret.push( <GridListTile className={classes.gridItem} key={data.species[i]['name']}><Specie {...data.species[i]}></Specie></GridListTile> );
         }
         return <div className='species'><GridList className={classes.gridList} cols={3} spacing={1}>{ret}</GridList></div>
+    } else if (data.status === 'error') {
+        return <div className='species'>There was an error fetching the data</div>
     } else{
         return <div className='species'>Loading...</div>
     }
