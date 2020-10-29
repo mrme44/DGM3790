@@ -1,0 +1,14 @@
+h1.MuiTypography-h1{
+    display: inline;
+    font-size: 2rem;
+}
+
+.authBtn{
+    appearance: none;
+    border: none;
+    border-radius: 0;
+    background: #eee;
+    padding: 10px 15px;
+    box-shadow: inset 0px 2px 18px -11px white;
+    border: 1px solid #ddd;
+}
