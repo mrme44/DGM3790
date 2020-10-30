@@ -1,18 +1,24 @@
 import React, { createContext, useState } from 'react';
 
-const authContext = React.createContext({isLoggedIn:false, username:null, email:null})
+const authContext = createContext()
 
-function AuthContextProvider(props){
+const AuthContextProvider = props => {
     const [auth, setAuth] = useState({isLoggedIn:false, username:null, email:null})
 
     function login(username, email){
-        setAuth({isLoggedIn:true, username:username, email:email})
+        let newObj = {isLoggedIn:true, username:username, email:email}
+        setAuth(newObj)
     }
-    function logout(username, email){
+    function logout(){
         setAuth({isLoggedIn:false, username:'', email:''})
     }
 
-    return <authContext.provider value={auth}>{props.children}</authContext.provider>
+    return (
+        <authContext.Provider value={[auth, login, logout]}>
+            {props.children}
+        </authContext.Provider>
+    );
 }
 
+export {authContext}
 export default AuthContextProvider;

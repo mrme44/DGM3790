@@ -1,6 +1,3 @@
-import authFormContext from './contexts/authForm.js';
-import AuthContextProvider from './contexts/auth';
-
 function randStr(len) {
   const dec2hex = (dec) => dec < 10 ? '0' + String(dec) : dec.toString(16);
   var arr = new Uint8Array((len || 40) / 2)
@@ -8,11 +5,8 @@ function randStr(len) {
   return Array.from(arr, dec2hex).join('')
 }
 
-const salt = randStr(10);
-
-async function hashPassword(username, passwd) { // uses sha256
-    passwd = username + salt + passwd
-
+async function _hashPassword(username, passwd, salt){
+    passwd = salt + passwd
     const msgBuffer = new TextEncoder('utf-8').encode(passwd);
     const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
 
@@ -20,19 +14,20 @@ async function hashPassword(username, passwd) { // uses sha256
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     const hashHex = hashArray.map(b => ('00' + b.toString(16)).slice(-2)).join('');
 
-    return hashHex;
+    return hashHex
 }
 
-async function verifyPasswd(username, password, hash){
-    return (await(username, password) === hash)
+async function hashPassword(username, passwd) { // uses sha256
+    const salt = randStr(10)
+
+    const hash = await _hashPassword(username, passwd, username+salt)
+
+    return salt + ':' + hash;
 }
 
-function login(username, email){
-    AuthContextProvider.login(username, email)
+async function verifyPasswd(username, password, salt_hash){
+    const [salt, hash] = salt_hash.split(':')
+    return (await _hashPassword(username, password, username+salt) === hash)
 }
 
-function logout(){
-    AuthContextProvider.logout('', '')
-}
-
-export {hashPassword, verifyPasswd, login, logout}
+export {hashPassword, verifyPasswd}

@@ -12,8 +12,8 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import Button from '@material-ui/core/Button';
 import authFormContext from './contexts/authForm.js';
 import {validateName, validatePassword} from './authFormValidators.js';
-import {verifyPasswd, login} from './auth';
-import {authContext} from './contexts/auth';
+import {verifyPasswd} from './auth';
+import {authContext} from './contexts/auth.js';
 
 const useStyles = makeStyles((theme) => ({
   btnRight: {
@@ -29,7 +29,7 @@ function LoginForm() {
       password: {has_error: false, error_msg: ''},
     });
 
-    const [ctx, ctxUpdate] = React.useContext(authFormContext)
+    const [ctx] = React.useContext(authFormContext)
     React.useEffect(() => {
         setFormErrors({
             username: validateName(ctx.username)
@@ -47,6 +47,8 @@ function LoginForm() {
       setShowPassed(!showPasswd);
     };
 
+    let [_, login] = React.useContext(authContext) // eslint-disable-line no-unused-vars
+
     function formSubmit(ev){
         ev.preventDefault()
         if ( ! validateName(ctx.username) || ! validatePassword(ctx.password) ){
@@ -54,15 +56,19 @@ function LoginForm() {
             alert('Username or Password was invalid')
             return false
         }
+        // We'll just pretend this verification is happening on the server
         let creds = localStorage.getItem('auth')
         if (! creds){
             alert('User does not exist')
             return false
         }
         creds = JSON.parse(creds)
-        verifyPasswd(ctx.username, ctx.password, creds['p']).then( (passwd) => {
-            localStorage.setItem( 'auth', JSON.stringify({'u':ctx.username, 'e':ctx.email, 'p':passwd}) )
-            login(ctx.username, passwd)
+        verifyPasswd(ctx.username, ctx.password, creds['p']).then( (success) => {
+            if (success){
+                login(creds['u'], creds['e'])
+            } else {
+                alert('Login failed')
+            }
         } )
     }
 

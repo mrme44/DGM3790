@@ -79,8 +79,8 @@ function SignupForm() {
             alert('Some fields were not filled out correctly')
             return false
         }
-        hashPassword(ctx.username, ctx.password).then( (passwd) => {
-            localStorage.setItem( 'auth', JSON.stringify({'u':ctx.username, 'e':ctx.email, 'p':passwd}) )
+        hashPassword(ctx.username, ctx.password).then( (hashed_passwd) => {
+            localStorage.setItem( 'auth', JSON.stringify({'u':ctx.username, 'e':ctx.email, 'p':hashed_passwd}) )
         } )
     }
 

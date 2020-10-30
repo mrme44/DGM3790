@@ -10,6 +10,7 @@ import Modal from '@material-ui/core/Modal';
 import AuthForm from './AuthForm';
 import './nav.css';
 import authFormContext from './contexts/authForm.js';
+import {authContext} from './contexts/auth.js'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -37,16 +38,31 @@ const modalStyles = {
     transform: 'translate(-50%, -50%)',
 };
 
-function Nav() {
+function Nav(props) {
     const classes = useStyles();
 
     const [modalStyle] = React.useState(modalStyles);
-    const [open, setOpen] = React.useState(true);
     const [formValues, setFormValue] = React.useState({
       username: '',
       email: '',
       password: '',
     });
+    const authCtx2 = React.useContext(authContext)
+    const [authCtx, login, logout] = authCtx2 // eslint-disable-line no-unused-vars
+    const [open, setOpen] = React.useState(props.loginFormOpen);
+
+    function btnClicked(){
+        if (authCtx.isLoggedIn){
+            logout()
+        } else {
+            setOpen(true)
+        }
+    }
+
+    React.useEffect(() => {
+        setOpen(!authCtx.isLoggedIn)
+    }, [authCtx.isLoggedIn])
+
 
   return (
     <nav className={classes.root}>
@@ -58,7 +74,7 @@ function Nav() {
             <Typography variant="h1" className={classes.title}>
               The Species of Star Wars
             </Typography>
-            <Button color="inherit" onClick={() => setOpen(true)}>Login/Signup</Button>
+            <Button color="inherit" onClick={btnClicked}>{authCtx.isLoggedIn ? 'Logout' : 'Login/Signup'}</Button>
             <authFormContext.Provider value={[formValues, setFormValue]}>
                 <Modal
                   open={open}
