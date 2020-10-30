@@ -81,6 +81,7 @@ function SignupForm() {
         }
         hashPassword(ctx.username, ctx.password).then( (hashed_passwd) => {
             localStorage.setItem( 'auth', JSON.stringify({'u':ctx.username, 'e':ctx.email, 'p':hashed_passwd}) )
+            alert('User added. You may login as this user now.\n(Note, the system currently only allows for a single user to be registered at a time.)')
         } )
     }
 
