@@ -29,7 +29,7 @@ function LoginForm() {
       password: {has_error: false, error_msg: ''},
     });
 
-    const [ctx] = React.useContext(authFormContext)
+    const [ctx, ctxUpdate] = React.useContext(authFormContext)
     React.useEffect(() => {
         setFormErrors({
             username: validateName(ctx.username)
@@ -75,33 +75,25 @@ function LoginForm() {
   return (
       <form className={classes.root} noValidate autoComplete="off" onSubmit={formSubmit}>
 
-        <authFormContext.Consumer>
-            { ([ctx, ctxUpdate]) =>
-                <TextField fullWidth margin='normal' id="username" label="Username" variant="filled" required
-                    helperText={formErrors.username.error_msg} error={formErrors.username.has_error} value={ctx.username}
-                    onChange={(ev) => { ctxUpdate({ ...ctx, 'username': ev.target.value }) }} />
-            }
-        </authFormContext.Consumer>
-        <authFormContext.Consumer>
-            { ([ctx, ctxUpdate]) =>
-                <FormControl fullWidth={true} variant="filled" margin='normal'>
-                    <InputLabel htmlFor="password" required>Password</InputLabel>
-                    <FilledInput fullWidth={true} id="password" label="password" type={showPasswd ? 'text' : 'password'} required
-                        endAdornment={
-                              <InputAdornment position="end">
-                                <IconButton aria-label="toggle password visibility" onClick={handleClickShowPassword}>
-                                  {showPasswd ? <Visibility /> : <VisibilityOff />}
-                                </IconButton>
-                              </InputAdornment>
-                            }
-                        value={ctx.password}
-                        onChange={(ev) => { ctxUpdate({ ...ctx, 'password': ev.target.value }) }}
-                    />
-                    <FormHelperText id="outlined-weight-helper-text" error={formErrors.password.has_error}>{formErrors.password.has_error && formErrors.password.error_msg}</FormHelperText>
-                </FormControl>
-            }
+            <TextField fullWidth margin='normal' id="username" label="Username" variant="filled" required
+                helperText={formErrors.username.error_msg} error={formErrors.username.has_error} value={ctx.username}
+                onChange={(ev) => { ctxUpdate({ ...ctx, 'username': ev.target.value }) }} />
+            <FormControl fullWidth={true} variant="filled" margin='normal'>
+                <InputLabel htmlFor="password" required>Password</InputLabel>
+                <FilledInput fullWidth={true} id="password" label="password" type={showPasswd ? 'text' : 'password'} required
+                    endAdornment={
+                          <InputAdornment position="end">
+                            <IconButton aria-label="toggle password visibility" onClick={handleClickShowPassword}>
+                              {showPasswd ? <Visibility /> : <VisibilityOff />}
+                            </IconButton>
+                          </InputAdornment>
+                        }
+                    value={ctx.password}
+                    onChange={(ev) => { ctxUpdate({ ...ctx, 'password': ev.target.value }) }}
+                />
+                <FormHelperText id="outlined-weight-helper-text" error={formErrors.password.has_error}>{formErrors.password.has_error && formErrors.password.error_msg}</FormHelperText>
+            </FormControl>
 
-        </authFormContext.Consumer>
         <Button className={classes.btnRight} variant="contained" color="primary" type='submit'>Submit</Button>
       </form>
   );
