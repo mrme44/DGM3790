@@ -13,10 +13,15 @@ import authFormContext from './contexts/authForm.js';
 import {authContext} from './contexts/auth.js'
 import {
   BrowserRouter as Router,
+  Link,
   Switch,
-  Route,
-  Link
+  Route
 } from "react-router-dom";
+import { withRouter } from "react-router";
+
+import QA from './pages/QA';
+import Favs from './pages/Favs';
+import Resources from './pages/Resources';
 
 function Nav(props) {
     const classes = useStyles();
@@ -46,44 +51,50 @@ function Nav(props) {
 
   return (
     <nav className={classes.root}>
-        <AppBar position="static">
-          <Toolbar>
+        <Router>
+            <AppBar position="static">
+              <Toolbar>
 
-            <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
-                {/* <MenuIcon /> */}
-            </IconButton>
+                <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
+                    {/* <MenuIcon /> */}
+                </IconButton>
 
-            <div className={classes.left}>
-                <Typography variant="h1" className={classes.title}>
-                  WordPress Q&A
-                </Typography>
+                <div className={classes.left}>
+                    <Typography variant="h1" className={classes.title}>
+                      WordPress Q&A
+                    </Typography>
 
-                <Router>
-                    <nav id='mainNav'>
-                      <ul>
-                        <li><Link to="/">All Q&As</Link></li>
-                        <li><Link to="/favs">Favorites</Link></li>
-                        <li><Link to="/resources">More Resources</Link></li>
-                      </ul>
-                    </nav>
-                </Router>
-            </div>
 
-            <Button color="inherit" onClick={btnClicked}>{authCtx.isLoggedIn ? 'Logout' : 'Login/Signup'}</Button>
-            <authFormContext.Provider value={[formValues, setFormValue]}>
-                <Modal
-                  open={open}
-                  onClose={() => setOpen(false)}
-                  aria-labelledby="simple-modal-title"
-                  aria-describedby="simple-modal-description"
-                >
-                <div style={modalStyle} className={classes.paper}>
-                  <AuthForm />
+                        <nav id='mainNav'>
+                          <ul>
+                            <li><Link to="/">All Q&As</Link></li>
+                            <li><Link to="/favs">Favorites</Link></li>
+                            <li><Link to="/resources">More Resources</Link></li>
+                          </ul>
+                        </nav>
                 </div>
-                </Modal>
-            </authFormContext.Provider>
-          </Toolbar>
-        </AppBar>
+
+                <Button color="inherit" onClick={btnClicked}>{authCtx.isLoggedIn ? 'Logout' : 'Login/Signup'}</Button>
+                <authFormContext.Provider value={[formValues, setFormValue]}>
+                    <Modal
+                      open={open}
+                      onClose={() => setOpen(false)}
+                      aria-labelledby="simple-modal-title"
+                      aria-describedby="simple-modal-description"
+                    >
+                    <div style={modalStyle} className={classes.paper}>
+                      <AuthForm />
+                    </div>
+                    </Modal>
+                </authFormContext.Provider>
+              </Toolbar>
+            </AppBar>
+        <Switch>
+          <Route exact  path="/resources" component={withRouter(Resources)} />
+          <Route exact  path="/favs" component={withRouter(Favs)} />
+          <Route exact  path="/" component={withRouter(QA)} />
+        </Switch>
+    </Router>
     </nav>
   );
 }

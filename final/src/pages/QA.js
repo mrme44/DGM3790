@@ -1,5 +1,5 @@
 import React from 'react';
-import WPHelpScreen from '../components/TabOneScreen';
+import WPHelpScreen from '../components/HelpScreen';
 
 function QA(){
     return <WPHelpScreen/>

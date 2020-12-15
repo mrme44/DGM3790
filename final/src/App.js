@@ -1,20 +1,10 @@
 import React from 'react';
 import './App.css';
 import Nav from './nav.js'
-import Species from './species.js'
 import axios from 'axios';
 import {authContext} from './contexts/auth.js';
 import dataContext from './contexts/help_data.js';
 import {simplifyStrForSearching} from './simplify_data.js';
-import QA from './pages/QA';
-import Favs from './pages/Favs';
-import Resources from './pages/Resources';
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link
-} from "react-router-dom";
 
 // const App = () => {
 //     const [authCtx] = React.useContext(authContext)
@@ -31,7 +21,7 @@ import {
 
 function App() {
     const [authCtx] = React.useContext(authContext)
-    const [dataCtx, ctxUpdate] = React.useState(dataContext)
+    const [dataCtx, ctxUpdate] = React.useState([])
 
     React.useEffect(() => {
       const fetchData = async () => {
@@ -57,26 +47,11 @@ function App() {
     }, []);
 
 
-    if (authCtx.isLoggedIn){
+    if (authCtx.isLoggedIn){ 
         return (
             <div className="App">
                 <dataContext.Provider value={dataCtx}>
-                <Nav loginFormOpen={false} />
-
-                <Router>
-                    <Switch>
-                      <Route path="/resources">
-                        <Resources />
-                      </Route>
-                      <Route path="/favs">
-                        <Favs />
-                      </Route>
-                      <Route path="/">
-                        <QA />
-                      </Route>
-                    </Switch>
-                </Router>
-
+                    <Nav loginFormOpen={false} />
                 </dataContext.Provider>
             </div>
         )

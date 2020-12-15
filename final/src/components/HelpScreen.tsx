@@ -12,7 +12,7 @@ import dataContext from '../contexts/help_data'
 //import {LRUMap} from '../lruCache'
 import useColorScheme from '../hooks/useColorScheme';
 import {simplifyStrForSearching} from '../simplify_data';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, createStyles } from '@material-ui/core/styles';
 
 import Accordion from '@material-ui/core/Accordion';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
@@ -20,53 +20,59 @@ import AccordionDetails from '@material-ui/core/AccordionDetails';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
-export interface StylesDictionary{
-    [Key: string]: React.CSSProperties|null;
-}
 interface StylesList {
     [index: number]: React.CSSProperties;
-}
-interface getFilteredDataRet {
-    [index: number]: any;
 }
 
 const getUrlRegex = /(?:\s|[(])((?:https:\/\/)[-_=+&@\/?a-zA-Z1-9.#]+?)(?:[.,?:;)]\s|\s|$)/
 const gotUrlRegex = /^https:\/\/[-_=+&@\/?a-zA-Z1-9.#]/
 
-const Item = ({ item, onClick, style }) => {
+const Item = (props) => {
+  let { item, onClick, style } = props;
+
 
   const styles = useStyles();
-  const [favorites, toggleFavorite] = React.useContext(favoritesContext)
+  //const [favorites, toggleFavorite] = React.useContext(favoritesContext)
+  const [favorites, toggleFavorite] = [ [], (x)=>{} ]
   const colorScheme = useColorScheme();
   return useMemo( () => {
       const icon = favorites.some(it => it.id === item.id) ? "heart" : "heart-outline"
       // Split out URLs (URLs must begin with https://, and punctation at the end will be ignored)
       // The regex could skip some URL queries with complex query strings if they for example have punctation at the end or symbols we are not capturing. If we ever have that scenario, we could improve the regex some more
       let ans = item.answer.split(getUrlRegex)
-      ans.forEach( (el, i) => {if (gotUrlRegex.test(el)){ ans[i] = <a href={el} style={styles.answerLink} key={i}>{el}</a> } } )
+      ans.forEach( (el, i) => {if (gotUrlRegex.test(el)){ ans[i] = <a href={el} className={styles.answerLink} key={i}>{el}</a> } } )
 
-      return <Accordion
-        onClick={onClick}
-        style={[styles.item, style] as StylesList}
-        //theme={{ colors: { primary: colorScheme==='dark' ? '#1d519d' : '#1f65ac' }}}
-        //titleNumberOfLines={3}
-        //descriptionNumberOfLines={100}
-        >
-
-            //left={props => <IconButton {...props} icon="heart-outline" onClick={(e) => {console.log('asdf')}} />}
-            <AccordionSummary expandIcon={<ExpandMoreIcon />} >
+      return <Accordion>
+            <AccordionSummary id={item.id}>
                 <Typography>{item.question+'?'}</Typography>
             </AccordionSummary>
-            <AccordionDetails
-                    //right={props => <IconButton {...props}
-                    //icon={icon}
-                    onClick={() => {toggleFavorite(item); item.changeToRender = !item.changeToRender}}
-                    //descriptionNumberOfLines={111}
-                    //titleStyle={styles.itemTitleStyle}
-                 >
+            <AccordionDetails>
                  <Typography>{ans}</Typography>
             </AccordionDetails>
       </Accordion>
+
+      // return <Accordion
+      //
+      //   //className={[styles.item, style] as StylesList}
+      //   //theme={{ colors: { primary: colorScheme==='dark' ? '#1d519d' : '#1f65ac' }}}
+      //   //titleNumberOfLines={3}
+      //   //descriptionNumberOfLines={100}
+      //   >
+      //
+      //       //left={props => <IconButton {...props} icon="heart-outline" onClick={(e) => {console.log('asdf')}} />}
+      //       <AccordionSummary expandIcon={<ExpandMoreIcon />} id={item.id} /*onClick={onClick}*/ >
+      //           <Typography>{item.question+'?'}</Typography>
+      //       </AccordionSummary>
+      //       <AccordionDetails
+      //               //right={props => <IconButton {...props}
+      //               //icon={icon}
+      //               //onClick={() => {toggleFavorite(item); item.changeToRender = !item.changeToRender}}
+      //               //descriptionNumberOfLines={111}
+      //               //titleStyle={styles.itemTitleStyle}
+      //            >
+      //            <Typography>{ans}</Typography>
+      //       </AccordionDetails>
+      // </Accordion>
   }, [item.changeToRender, favorites]);
 
 };
@@ -163,7 +169,7 @@ function getFilteredData(query: string, DATA: any) : any{
 
 export default function WPHelpScreen() {
     // @ts-ignore
-    const [DATA, _] = useContext(dataContext)
+    const DATA = useContext(dataContext)
     const [selectedId, setSelectedId] = useState(null);
     const [searchQuery, setSearchQuery] = useState<any | null>('');
     const previouslySelectedID = useRef(null);
@@ -181,7 +187,9 @@ export default function WPHelpScreen() {
         }
 
         //console.log(filteredData.length, simplifiedQuery)
-        if (filteredData.length === 0 && simplifiedQuery.length !== 0){
+        if (!filteredData){
+            setErrMsg('')
+        }else if (filteredData.length === 0 && simplifiedQuery.length !== 0){
             setErrMsg('No results found')
         } else {
             setErrMsg(false)
@@ -193,7 +201,7 @@ export default function WPHelpScreen() {
 
 
     const inDarkMode = useColorScheme() === 'dark';
-    const renderItem = ({ item }) => {
+    const renderItem = (item) => {
         const backgroundColor = item.id === selectedId ? (inDarkMode ? "#a97322" : "#b0bdcb") : (inDarkMode ? "#9a6f20" : "#e2e8f3");
         item.changeToRender = (previouslySelectedID.current !== item.id || previouslySelectedID.current === null) ? !item.changeToRender : item.changeToRender;
 
@@ -201,7 +209,7 @@ export default function WPHelpScreen() {
         <Item
           item={item}
           onClick={() => {setSelectedId(item.id) }}
-          style={{ backgroundColor }}
+          className={{ backgroundColor }}
           key={item.id}
         />
         );
@@ -212,17 +220,19 @@ export default function WPHelpScreen() {
         <TextField
             placeholder="Search Questions"
             id="outlined-basic"
-            label="Outlined"
             variant="outlined"
-            onChange={query => {/*setErrMsg('Loading...');*/ setSearchQuery(query)} }
+            // @ts-ignore
+            onChange={ev => {/*setErrMsg('Loading...');*/ setSearchQuery( ev.target.value)} }
             value={searchQuery}
             //theme={inDarkMode ? window.matchMedia('(prefers-color-scheme: dark)').matches : null}
-            style={(inDarkMode ? styles.searchBarDark : null ) as unknown as StylesDictionary}
+            className={inDarkMode ? styles.searchbarDark : styles.searchbarLight}
             />
 
-        {(errMsg !== false && <p style={styles.empty}>{errMsg}</p>) || <FlatList
-          data={filteredData}
+        {(errMsg !== false && <p className={styles.empty}>{errMsg}</p>) || <FlatList
+          list={filteredData}
           renderItem={renderItem}
+          renderWhenEmpty={() => <div>No Q&As found with that search term</div>}
+          renderOnScroll
           //extraData={selectedId}
         />}
         </>
@@ -230,7 +240,7 @@ export default function WPHelpScreen() {
 
 }
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => createStyles({
   container: {
     flex: 1,
     alignItems: 'center',
@@ -253,13 +263,13 @@ const useStyles = makeStyles((theme) => ({
       left: 17,
       opacity: .84
   },
-  searchBarDark: {
-      backgroundColor: '#2e2e2e'
+  searchbarDark: {
+      /*backgroundColor: '#2e2e2e'*/
+      backgroundColor: '#eee'
+  },
+  searchbarLight: {
   },
   answerLink: {
       top: 0,
   },
-  item: {
-      /* giving up on how to make typescript happy without having to do this */
-  }
 }) ) as any;

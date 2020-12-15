@@ -20,9 +20,9 @@ const FavoritesContextProvider = props => {
             addFavorite(item)
         }
     }
-    function hasFavorite(item){
-        return favorites.some(it => it.id === item.id)
-    }
+    // function hasFavorite(item){
+    //     return favorites.some(it => it.id === item.id)
+    // }
 
     return (
         <favoritesContext.Provider value={[favorites, toggleFavorite, removeFavorite, addFavorite]}>
